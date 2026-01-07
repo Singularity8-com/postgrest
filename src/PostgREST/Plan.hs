@@ -865,7 +865,7 @@ addRelatedOrders (Node rp@ReadPlan{order,from} forest) = do
             Just False ->
               let
                 ordAlias = toManyOrderAlias relAggAlias idx
-                relOrder = RelOrderAgg ordAlias (CoercibleOrderTerm (unknownField (fst coRelTerm) (snd coRelTerm)) coDirection coNullOrder)
+                relOrder = RelOrderAgg ordAlias (CoercibleOrderTerm (uncurry unknownField coRelTerm) coDirection coNullOrder)
                 newForest = updateTarget coRelation (addRelOrderAgg relOrder) curForest
                 newOrder = cot{coRelation=relAggAlias, coRelTerm=(ordAlias, [])}
               in
