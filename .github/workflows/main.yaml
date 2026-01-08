@@ -12,10 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: Setup Nix Environment
+        uses: ./.github/actions/setup-nix
       - name: Login to registry
         run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login docker-registry.pretronic.net/ -u ${{ secrets.DOCKER_REGISTRY_USERNAME }} --password-stdin
-      - name: Build image
-        run: docker build . --file Dockerfile -t docker-registry.pretronic.net/postgrest:${{ github.sha }}  -t docker-registry.pretronic.net/postgrest:${{ github.ref_name }} -t docker-registry.pretronic.net/postgrest:latest
+      - name: Build image (Nix)
+        run: nix-build -A docker.image --out-link postgrest-docker.tar.gz
+      - name: Load and tag image
+        run: |
+          docker load -i postgrest-docker.tar.gz
+          docker tag postgrest:latest docker-registry.pretronic.net/postgrest:${{ github.sha }}
+          docker tag postgrest:latest docker-registry.pretronic.net/postgrest:${{ github.ref_name }}
+          docker tag postgrest:latest docker-registry.pretronic.net/postgrest:latest
       - name: Push image
         run: docker push --all-tags docker-registry.pretronic.net/postgrest
