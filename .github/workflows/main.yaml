@@ -1,0 +1,21 @@
+name: POSTGREST image
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ dev ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to registry
+        run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login docker-registry.pretronic.net/ -u ${{ secrets.DOCKER_REGISTRY_USERNAME }} --password-stdin
+      - name: Build image
+        run: docker build . --file Dockerfile -t docker-registry.pretronic.net/postgrest:${{ github.sha }}  -t docker-registry.pretronic.net/postgrest:${{ github.ref_name }} -t docker-registry.pretronic.net/postgrest:latest
+      - name: Push image
+        run: docker push --all-tags docker-registry.pretronic.net/postgrest
