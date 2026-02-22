@@ -16,14 +16,14 @@ jobs:
       - name: Setup Nix Environment
         uses: ./.github/actions/setup-nix
       - name: Login to registry
-        run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login docker-registry.pretronic.net/ -u ${{ secrets.DOCKER_REGISTRY_USERNAME }} --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
       - name: Build image (Nix)
         run: nix-build -A docker.image --out-link postgrest-docker.tar.gz
       - name: Load and tag image
         run: |
           docker load -i postgrest-docker.tar.gz
-          docker tag postgrest:latest docker-registry.pretronic.net/postgrest:${{ github.sha }}
-          docker tag postgrest:latest docker-registry.pretronic.net/postgrest:${{ github.ref_name }}
-          docker tag postgrest:latest docker-registry.pretronic.net/postgrest:latest
+          docker tag postgrest:latest ${{ env.REGISTRY }}/postgrest:${{ github.sha }}
+          docker tag postgrest:latest ${{ env.REGISTRY }}/postgrest:${{ github.ref_name }}
+          docker tag postgrest:latest ${{ env.REGISTRY }}/postgrest:latest
       - name: Push image
-        run: docker push --all-tags docker-registry.pretronic.net/postgrest
+        run: docker push --all-tags ${{ env.REGISTRY }}/postgrest
