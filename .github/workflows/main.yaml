@@ -4,7 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches: [ dev ]
-
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  
 jobs:
 
   build:
