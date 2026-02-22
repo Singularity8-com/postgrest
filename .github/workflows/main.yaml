@@ -8,6 +8,10 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: singularity8-com/postgrest
 
+permissions:
+  contents: read
+  packages: write
+  
 jobs:
 
   build:
