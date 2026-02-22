@@ -7,7 +7,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  
+
 jobs:
 
   build:
@@ -25,8 +25,8 @@ jobs:
       - name: Load and tag image
         run: |
           docker load -i postgrest-docker.tar.gz
-          docker tag postgrest:latest ${{ env.REGISTRY }}/postgrest:${{ github.sha }}
-          docker tag postgrest:latest ${{ env.REGISTRY }}/postgrest:${{ github.ref_name }}
-          docker tag postgrest:latest ${{ env.REGISTRY }}/postgrest:latest
+          docker tag postgrest:latest ${{ env.REGISTRY }}/singularity8-com/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker tag postgrest:latest ${{ env.REGISTRY }}/singularity8-com/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+          docker tag postgrest:latest ${{ env.REGISTRY }}/singularity8-com/${{ env.IMAGE_NAME }}:latest
       - name: Push image
-        run: docker push --all-tags ${{ env.REGISTRY }}/postgrest
+        run: docker push --all-tags ${{ env.REGISTRY }}/singularity8-com/${{ env.IMAGE_NAME }}
